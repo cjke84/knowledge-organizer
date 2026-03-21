@@ -5,41 +5,23 @@
 
 OpenClaw / Codex skill for Obsidian-native knowledge organization.
 
-## When to use
+## What it is
 
-- Store an article into an Obsidian vault
-- Deduplicate a draft before saving
-- Generate tags, summary, and related-note suggestions
+- Obsidian-ready note generator for vault workflows
+- Duplicate detection and related-note suggestions
+- Tag validation, summary shaping, and metadata output
 
 ## What it does
 
-- Generates Obsidian-ready notes with frontmatter, wikilinks, embeds, and block IDs
+- Generates frontmatter, wikilinks, embeds, and block IDs
 - Detects duplicates with URL, hash, alias, and similarity checks
 - Recommends related notes with wikilink-friendly references
 - Validates tags against the vault contract before writing
 
-## Compatibility
-
-- OpenClaw-compatible skill
-- Codex-compatible skill
-- Obsidian vault workflows
-
-## Structure
-
-- `SKILL.md`: skill contract and workflow
-- `scripts/`: runtime helpers
-- `tests/`: regression tests
-- `references/`: tag system and supporting docs
-
-## Test
+## Use
 
 ```bash
 pytest -q
-```
-
-## Usage
-
-```bash
 python scripts/check_duplicate.py "New Title" --content "$(cat draft.md)" --json
 python scripts/find_related.py alpha beta --title "New Title" --json
 ```

@@ -10,7 +10,7 @@ An Obsidian vault workflow skill that turns articles, links, and drafts into str
 - extract the article
 - check duplicates and return a structured decision
 - generate tags, summary, and metadata
-- preserve provided images in the rendered note
+- download images into `assets/` and keep readable references
 - render an Obsidian-ready note
 
 ## Capabilities

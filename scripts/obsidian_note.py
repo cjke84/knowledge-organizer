@@ -10,6 +10,8 @@ from typing import Any, Iterable
 
 import yaml
 
+from .image_assets import render_image_markdown
+
 FRONTMATTER_BOUNDARY = "---"
 
 
@@ -132,7 +134,12 @@ def normalize_one_line(text: str) -> str:
     return re.sub(r"\s+", " ", (text or "")).strip()
 
 
-def render_obsidian_note(draft: Mapping[str, Any], *, vault_root: str | Path) -> RenderedNote:
+def render_obsidian_note(
+    draft: Mapping[str, Any],
+    *,
+    vault_root: str | Path,
+    download_image=None,
+) -> RenderedNote:
     """
     Runtime contract:
     - input: structured draft + target vault root
@@ -238,7 +245,12 @@ def render_obsidian_note(draft: Mapping[str, Any], *, vault_root: str | Path) ->
     rendered_images: list[str] = []
     if isinstance(images, list):
         for item in images:
-            rendered = _render_image_reference(item)
+            rendered = render_image_markdown(
+                item,
+                vault_root=vault_root,
+                note_title=title,
+                download_image=download_image,
+            )
             if rendered:
                 rendered_images.append(rendered)
 

@@ -3,22 +3,23 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![GitHub](https://img.shields.io/badge/GitHub-cjke84%2Fobsidian--knowledge--organizer-blue?logo=github)](https://github.com/cjke84/obsidian-knowledge-organizer)
 
-Obsidian-native knowledge organizer / Obsidian 原生知识整理工具
+Obsidian-native knowledge organizer for vault workflows. / 面向 Obsidian 知识库工作流的原生整理工具。
 
-## What it does / 功能
+## Capabilities / 核心能力
 
-- Obsidian-native note shaping with frontmatter, wikilinks, embeds, and block IDs
-- Layered duplicate detection and related-note discovery
-- Tag-contract validation for Obsidian vault workflows
+- Generate Obsidian-ready notes with frontmatter, wikilinks, embeds, and block IDs
+- Detect duplicates with layered URL, hash, alias, and similarity checks
+- Surface related notes with wikilink-friendly references
+- Validate tags against the vault contract before writing
 
-## Repository Layout / 仓库结构
+## Structure / 仓库结构
 
 - `SKILL.md`: skill contract and workflow
 - `scripts/`: runtime helpers
 - `tests/`: regression tests
 - `references/`: tag system and supporting docs
 
-## Testing / 测试
+## Test
 
 Run the full suite:
 
@@ -26,7 +27,7 @@ Run the full suite:
 pytest -q
 ```
 
-## Usage Examples / 使用示例
+## Usage / 使用示例
 
 Check whether a draft duplicates an existing note:
 

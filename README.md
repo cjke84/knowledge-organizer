@@ -10,6 +10,4 @@
 
 ## Skill
 
-- OpenClaw-compatible skill
-- Codex-compatible skill
-- Obsidian vault workflows
+OpenClaw-compatible skill. Codex-compatible skill. Obsidian vault workflows.

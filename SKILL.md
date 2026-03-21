@@ -1,5 +1,5 @@
 ---
-name: knowledge-organizer
+name: obsidian-knowledge-organizer
 description: OpenClaw 和 Codex 可用的 Obsidian 知识整理 skill。用于存入知识库、整理文章、打标签、归档、生成摘要和推荐相关文章。
 ---
 

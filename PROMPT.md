@@ -1,21 +1,27 @@
-# Direct Agent Prompt
+# Install Skill Prompt
 
 ## Chinese
 
 ```text
-请使用 obsidian-knowledge-organizer 处理这篇文章/链接，目标是“存入知识库”。
+请把 GitHub 仓库 cjke84/obsidian-knowledge-organizer 安装成可用 skill。
 
-要求：提取内容，检查重复并返回结构化 decision，生成标签/摘要/元数据，保留图片引用，输出可直接写入 Obsidian 的笔记。
-
-如果发现重复，不要直接覆盖；先返回 decision 和建议。
+安装要求：
+- 获取仓库内容，保留 `SKILL.md`、`scripts/`、`references/`、`tests/`
+- 将 skill 名称保持为 `obsidian-knowledge-organizer`
+- 确认该 skill 可在 OpenClaw 和 Codex 中使用
+- 安装后先运行测试，确认 `pytest -q` 通过
+- 如果安装路径或环境变量需要配置，优先遵循仓库里的说明
 ```
 
 ## English
 
 ```text
-Use obsidian-knowledge-organizer to process this article/link. The goal is to store it in the knowledge base.
+Install the GitHub repository cjke84/obsidian-knowledge-organizer as a usable skill.
 
-Requirements: extract the content, check duplicates and return a structured decision, generate tags/summary/metadata, preserve images, and render an Obsidian-ready note.
-
-If a duplicate is found, do not overwrite automatically; return the decision and recommendation.
+Installation requirements:
+- fetch the repository and keep `SKILL.md`, `scripts/`, `references/`, and `tests/`
+- keep the skill name as `obsidian-knowledge-organizer`
+- confirm the skill is usable in OpenClaw and Codex
+- run tests after installation and verify `pytest -q` passes
+- if installation paths or environment variables are needed, follow the repository instructions first
 ```

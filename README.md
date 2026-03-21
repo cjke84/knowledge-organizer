@@ -7,7 +7,7 @@
 
 - [English README](README_EN.md)
 - [中文介绍](README_CN.md)
-- [Direct Agent Prompt](PROMPT.md)
+- [Install Skill Prompt](PROMPT.md)
 
 ## Skill
 

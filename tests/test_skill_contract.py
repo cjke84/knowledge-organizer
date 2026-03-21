@@ -17,6 +17,7 @@ def test_skill_contract_mentions_obsidian_frontmatter_wikilinks_and_embeds():
         "OPENCLAW_KB_ROOT",
         "absolute path",
         "frontmatter / wikilink / embed / block id",
+        "小红书链接优先用 `xiaohongshu-mcp`",
     ]
     required_tag_phrases = [
         "至少 1 个领域标签 + 1 个类型标签",

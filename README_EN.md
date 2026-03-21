@@ -16,6 +16,7 @@ An Obsidian vault workflow skill that turns articles, links, and drafts into str
 ## Capabilities
 
 - OpenClaw- and Codex-compatible skill for Obsidian-native knowledge organization
+- Supports public-account posts, Xiaohongshu links, and ordinary web pages
 - Obsidian-ready note generator for vault workflows
 - validates tags against the repository tag contract
 - recommends directly linkable related notes

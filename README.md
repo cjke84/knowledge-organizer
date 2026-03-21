@@ -10,6 +10,7 @@
 - [English README](README_EN.md)
 - [中文介绍](README_CN.md)
 - [Install Skill for Agent](INSTALL.md)
+- [GitHub 仓库](https://github.com/cjke84/obsidian-knowledge-organizer)
 
 ## 能力概览
 

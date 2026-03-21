@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![GitHub](https://img.shields.io/badge/GitHub-cjke84%2Fobsidian--knowledge--organizer-blue?logo=github)](https://github.com/cjke84/obsidian-knowledge-organizer)
 
-An Obsidian vault workflow skill that turns articles, links, and drafts into structured notes you can write directly to disk.
+An Obsidian vault workflow skill that turns article links, drafts, and notes into structured Obsidian-ready Markdown with duplicate checks, tags, summaries, related-note suggestions, and image downloads.
 
 ## What it does
 
@@ -42,3 +42,4 @@ python scripts/find_related.py alpha beta --title "New Title" --json
 
 - [中文介绍](README_CN.md)
 - [Install Skill for Agent](INSTALL.md)
+- [GitHub Repository](https://github.com/cjke84/obsidian-knowledge-organizer)

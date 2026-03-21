@@ -42,3 +42,4 @@ python scripts/find_related.py alpha beta --title "新标题" --json
 
 - [English README](README_EN.md)
 - [安装说明](INSTALL.md)
+- [GitHub 仓库](https://github.com/cjke84/obsidian-knowledge-organizer)

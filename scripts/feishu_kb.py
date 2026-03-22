@@ -77,6 +77,10 @@ def build_feishu_payload(
         "source_id": draft.source_id,
         "content_hash": draft.content_hash,
         "tags": list(draft.tags),
+        # Preserve media metadata for downstream importers. Keep as raw lists to
+        # avoid lossy normalization at this boundary.
+        "images": list(draft.images),
+        "attachments": list(draft.attachments),
         "content": _markdown_body(draft),
     }
     if knowledge_base_id:

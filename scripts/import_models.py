@@ -25,6 +25,21 @@ def _as_list(value: Any) -> list[str]:
     return [_one_line(item) for item in items if _one_line(item)]
 
 
+def _as_any_list(value: Any) -> list[Any]:
+    """
+    Normalize optional "list-like" fields (e.g. images/attachments) into a list.
+
+    Note: do NOT treat generic iterables as sequences here. A mapping should be
+    kept as a single object rather than expanded to its keys.
+    """
+
+    if value is None:
+        return []
+    if isinstance(value, list):
+        return value
+    return [value]
+
+
 def _normalize_content_for_hash(content: str) -> str:
     text = str(content or "")
     text = text.replace("\r\n", "\n").replace("\r", "\n")
@@ -50,6 +65,8 @@ class ImportDraft:
     source_url: str
     content: str
     tags: list[str]
+    images: list[Any]
+    attachments: list[Any]
     source_id: str
     content_hash: str
 
@@ -72,6 +89,8 @@ class ImportDraft:
             or ""
         )
         tags = _as_list(data.get("tags"))
+        images = _as_any_list(data.get("images"))
+        attachments = _as_any_list(data.get("attachments"))
 
         normalized_content = _normalize_content_for_hash(content)
         content_hash = sha256_hex(normalized_content)
@@ -85,6 +104,8 @@ class ImportDraft:
             source_url=source_url,
             content=content,
             tags=tags,
+            images=images,
+            attachments=attachments,
             source_id=source_id,
             content_hash=content_hash,
         )
@@ -96,6 +117,8 @@ class ImportDraft:
             "source_url": self.source_url,
             "content": self.content,
             "tags": list(self.tags),
+            "images": list(self.images),
+            "attachments": list(self.attachments),
             "source_id": self.source_id,
             "content_hash": self.content_hash,
         }

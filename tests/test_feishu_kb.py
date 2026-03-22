@@ -11,6 +11,8 @@ def test_build_feishu_payload_contains_required_fields():
             "source_url": "https://example.com/note",
             "content": "Body text",
             "tags": ["tag-a", "tag-b"],
+            "images": [{"url": "https://img.example/a.png"}],
+            "attachments": [{"url": "https://files.example/a.pdf"}],
         }
     )
 
@@ -21,6 +23,8 @@ def test_build_feishu_payload_contains_required_fields():
     assert payload["source_url"] == "https://example.com/note"
     assert payload["source_id"] == draft.source_id
     assert payload["content_hash"] == draft.content_hash
+    assert payload["images"] == [{"url": "https://img.example/a.png"}]
+    assert payload["attachments"] == [{"url": "https://files.example/a.pdf"}]
     assert "Body text" in payload["content"]
     assert "tag-a" in payload["content"]
 

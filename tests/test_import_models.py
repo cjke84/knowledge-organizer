@@ -60,3 +60,32 @@ def test_import_draft_uses_source_path_for_non_url_sources():
     )
 
     assert one.source_id != two.source_id
+
+
+def test_import_draft_round_trips_media_fields():
+    from scripts import ImportDraft
+
+    images = [
+        {"url": "https://img.example/a.png", "alt": "a"},
+        {"path": "assets/a.png"},
+    ]
+    attachments = {"url": "https://files.example/a.pdf", "name": "a.pdf"}
+
+    draft = ImportDraft.from_mapping(
+        {
+            "title": "Media",
+            "source_type": "web",
+            "source_url": "https://example.com/media",
+            "content": "Body",
+            "images": images,
+            # Accept single-object values without turning dicts into key lists.
+            "attachments": attachments,
+        }
+    )
+
+    assert draft.images == images
+    assert draft.attachments == [attachments]
+
+    mapping = draft.to_mapping()
+    assert mapping["images"] == images
+    assert mapping["attachments"] == [attachments]

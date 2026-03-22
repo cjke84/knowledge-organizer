@@ -87,7 +87,7 @@
 
 ## 技能契约对齐
 
-`obsidian-knowledge-organizer` 技能在写入 vault 前必须按本标签体系做校验：
+`knowledge-organizer` 技能在写入 vault 前必须按本标签体系做校验：
 - 标签不满足“1 个领域 + 1 个类型”的候选结果不能直接落盘
 - 标签总数应保持在 5-10 个
 - Obsidian 笔记 frontmatter 中的 `tags` 字段应只包含最终通过校验的标签

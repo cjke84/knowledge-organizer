@@ -2,7 +2,7 @@
 
 ## 背景
 
-当前 `obsidian-knowledge-organizer` 的主流程已经支持：
+当前 `knowledge-organizer` 的主流程已经支持：
 
 - 文章链接、Markdown 草稿、结构化 draft
 - 重复检测

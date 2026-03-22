@@ -1,5 +1,5 @@
 ---
-name: obsidian-knowledge-organizer
+name: knowledge-organizer
 description: An OpenClaw- and Codex-compatible Obsidian knowledge organization skill for importing articles, organizing notes, applying tags, archiving content, generating summaries, and suggesting related notes.
 ---
 

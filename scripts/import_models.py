@@ -36,7 +36,7 @@ def _as_any_list(value: Any) -> list[Any]:
     if value is None:
         return []
     if isinstance(value, list):
-        return value
+        return list(value)
     return [value]
 
 

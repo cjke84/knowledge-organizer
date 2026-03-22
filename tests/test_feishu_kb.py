@@ -38,6 +38,8 @@ def test_import_to_feishu_returns_sync_record_from_transport():
             "source_type": "markdown",
             "source_path": "/vault/note.md",
             "content": "Body text",
+            "images": [{"url": "https://img.example/a.png"}],
+            "attachments": [{"url": "https://files.example/a.pdf"}],
         }
     )
 
@@ -60,6 +62,8 @@ def test_import_to_feishu_returns_sync_record_from_transport():
     )
 
     assert seen["payload"]["title"] == "Feishu Note"
+    assert seen["payload"]["images"] == [{"url": "https://img.example/a.png"}]
+    assert seen["payload"]["attachments"] == [{"url": "https://files.example/a.pdf"}]
     assert result.remote_id == "doc_123"
     assert result.remote_url == "https://example.com/doc/123"
     assert result.sync_record.destination == "feishu"

@@ -89,3 +89,27 @@ def test_import_draft_round_trips_media_fields():
     mapping = draft.to_mapping()
     assert mapping["images"] == images
     assert mapping["attachments"] == [attachments]
+
+
+def test_import_draft_copies_media_lists_on_input():
+    from scripts import ImportDraft
+
+    images = [{"url": "https://img.example/a.png"}]
+    attachments = [{"url": "https://files.example/a.pdf"}]
+
+    draft = ImportDraft.from_mapping(
+        {
+            "title": "Media",
+            "source_type": "web",
+            "source_url": "https://example.com/media",
+            "content": "Body",
+            "images": images,
+            "attachments": attachments,
+        }
+    )
+
+    images.append({"url": "https://img.example/b.png"})
+    attachments.append({"url": "https://files.example/b.pdf"})
+
+    assert draft.images == [{"url": "https://img.example/a.png"}]
+    assert draft.attachments == [{"url": "https://files.example/a.pdf"}]

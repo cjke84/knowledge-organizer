@@ -103,6 +103,25 @@ def test_dry_run_does_not_write_obsidian_files(tmp_path: Path) -> None:
 
     assert result.processed == 1
     assert list(vault_root.glob("*.md")) == []
+    assert list((vault_root / "assets").rglob("*")) == []
+
+
+def test_once_mode_dedupes_duplicate_sources(tmp_path: Path) -> None:
+    from scripts.knowledge_sync import run_sync
+
+    draft = _draft(title="Duplicate Note")
+
+    result = run_sync(
+        destination="ima",
+        mode="once",
+        drafts=[draft, draft],
+        state_path=tmp_path / "state.json",
+        ima_config_overrides={"client_id": "c", "api_key": "k"},
+        ima_transport=lambda payload, config: {"doc_id": "doc_123"},
+    )
+
+    assert result.processed == 1
+    assert result.skipped == 1
 
 
 def test_feishu_dispatch_can_be_faked_via_transport(tmp_path: Path) -> None:
@@ -140,4 +159,3 @@ def test_unknown_destination_raises(tmp_path: Path) -> None:
             drafts=[_draft()],
             state_path=tmp_path / "state.json",
         )
-

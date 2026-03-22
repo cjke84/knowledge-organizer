@@ -10,7 +10,7 @@ from .feishu_kb import FeishuImportConfig, import_to_feishu
 from .ima_kb import ImaImportConfig, import_to_ima
 from .import_models import ImportDraft
 from .import_sources import load_folder, load_link, load_markdown_file
-from .obsidian_note import render_obsidian_note
+from .obsidian_note import render_obsidian_note, sanitize_filename
 from .settings import resolve_vault_root
 from .sync_state import SyncStateRecord, SyncStateStore
 
@@ -54,6 +54,20 @@ def _build_draft_collection(
     return collected
 
 
+def _dedupe_drafts(drafts: Iterable[ImportDraft]) -> tuple[list[ImportDraft], int]:
+    seen: set[tuple[str, str]] = set()
+    unique: list[ImportDraft] = []
+    skipped = 0
+    for draft in drafts:
+        key = (draft.source_id, draft.content_hash)
+        if key in seen:
+            skipped += 1
+            continue
+        seen.add(key)
+        unique.append(draft)
+    return unique, skipped
+
+
 def _should_skip_sync(
     *,
     store: SyncStateStore,
@@ -73,6 +87,10 @@ def _write_obsidian_note(
     vault_root: str | Path,
     dry_run: bool,
 ) -> tuple[Path, str]:
+    if dry_run:
+        root = Path(vault_root).expanduser()
+        return root / f"{sanitize_filename(draft.title)}.md", ""
+
     def _fail_download(_url: str, _destination: Path) -> None:
         raise RuntimeError("dry-run image download disabled")
 
@@ -125,9 +143,10 @@ def run_sync(
         markdown_path=markdown_path,
         folder_path=folder_path,
     )
+    collected, duplicate_skipped = _dedupe_drafts(collected)
     results: list[SyncItemResult] = []
     processed = 0
-    skipped = 0
+    skipped = duplicate_skipped
     resolved_vault_root = resolve_vault_root(vault_root) if destination == "obsidian" else None
 
     for draft in collected:

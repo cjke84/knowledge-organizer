@@ -7,10 +7,12 @@ def test_detect_source_type_wechat_xiaohongshu_and_web():
     assert (
         detect_source_type("https://mp.weixin.qq.com/s/some-article") == "wechat_article"
     )
+    assert detect_source_type("mp.weixin.qq.com/s/some-article") == "wechat_article"
     assert (
         detect_source_type("https://www.xiaohongshu.com/explore/abc")
         == "xiaohongshu_note"
     )
+    assert detect_source_type("xhslink.com/xyz") == "xiaohongshu_note"
     assert detect_source_type("https://xhslink.com/xyz") == "xiaohongshu_note"
     assert detect_source_type("https://example.com/post") == "web"
 
@@ -41,3 +43,17 @@ def test_folder_scan_matches_single_file_import(tmp_path: Path):
 
     assert len(scanned) == 1
     assert scanned[0].to_mapping() == direct
+
+
+def test_folder_scan_skips_unreadable_markdown(tmp_path: Path):
+    from scripts.import_sources import load_folder
+
+    good = tmp_path / "good.md"
+    good.write_text("# Good\n\nBody\n", encoding="utf-8")
+    bad = tmp_path / "bad.md"
+    bad.write_bytes(b"\xff\xfe\x00not utf-8")
+
+    scanned = load_folder(tmp_path)
+
+    assert len(scanned) == 1
+    assert scanned[0].title == "Good"

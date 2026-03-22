@@ -20,8 +20,13 @@ def detect_source_type(url: str) -> str:
     - Xiaohongshu note links (`xiaohongshu.com`, `xhslink.com`) are tagged as
       `xiaohongshu_note`. Extraction guidance lives in `references/xiaohongshu-import.md`.
     """
-    parsed = urlparse(str(url or "").strip())
+    raw = str(url or "").strip()
+    if raw and "://" not in raw:
+        raw = f"https://{raw}"
+    parsed = urlparse(raw)
     host = (parsed.netloc or "").lower()
+    if not host and parsed.path:
+        host = parsed.path.split("/", 1)[0].lower()
     if host.endswith("mp.weixin.qq.com"):
         return "wechat_article"
     if host.endswith("xiaohongshu.com") or host.endswith("xhslink.com"):
@@ -42,7 +47,10 @@ def load_link(url: str, *, title: str | None = None, content: str | None = None,
 
 def load_markdown_file(path: str | Path, **extra: Any) -> ImportDraft:
     md_path = Path(path)
-    content = md_path.read_text(encoding="utf-8")
+    try:
+        content = md_path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        content = ""
     title = extract_title(content) or md_path.stem or "Untitled"
 
     payload: dict[str, Any] = {
@@ -64,6 +72,8 @@ def load_folder(path: str | Path) -> list[ImportDraft]:
 
     md_files: Iterable[Path] = sorted(p for p in root.rglob("*.md") if p.is_file())
     for md_path in md_files:
-        drafts.append(load_markdown_file(md_path))
+        draft = load_markdown_file(md_path)
+        if draft.content == "" and md_path.exists() and md_path.stat().st_size > 0:
+            continue
+        drafts.append(draft)
     return drafts
-

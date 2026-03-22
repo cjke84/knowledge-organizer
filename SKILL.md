@@ -41,6 +41,7 @@ This skill turns article links, drafts, and notes into structured Markdown with 
 - Obsidian: `python3 -m scripts.knowledge_sync --destination obsidian --mode once --state .sync-state.json --vault-root /path/to/vault --markdown-path draft.md`
 - Feishu: `python3 -m scripts.knowledge_sync --destination feishu --mode once --state .sync-state.json --markdown-path draft.md`
 - Tencent IMA: `python3 -m scripts.knowledge_sync --destination ima --mode sync --state .sync-state.json --folder-path drafts/`
+- Disable one or more destinations: add `--disable obsidian,feishu` to skip the selected targets when invoking the sync orchestrator.
 
 ## Workflow
 

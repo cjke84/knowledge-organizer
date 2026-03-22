@@ -113,6 +113,16 @@ def _make_ima_config(overrides: dict[str, Any] | None) -> ImaImportConfig:
     return ImaImportConfig(**(overrides or {}))
 
 
+def _normalize_disabled_destinations(values: Iterable[str] | None) -> set[str]:
+    disabled: set[str] = set()
+    for value in values or []:
+        for item in str(value).split(","):
+            item = item.strip().lower()
+            if item:
+                disabled.add(item)
+    return disabled
+
+
 def run_sync(
     *,
     destination: str,
@@ -124,6 +134,7 @@ def run_sync(
     folder_path: str | Path | None = None,
     vault_root: str | Path | None = None,
     dry_run: bool = False,
+    disabled_destinations: Iterable[str] | None = None,
     feishu_config_overrides: dict[str, Any] | None = None,
     ima_config_overrides: dict[str, Any] | None = None,
     feishu_transport: Callable[[dict[str, Any], FeishuImportConfig], dict[str, Any]] | None = None,
@@ -135,6 +146,9 @@ def run_sync(
         raise ValueError(f"Unsupported destination: {destination}")
     if mode not in {"once", "sync"}:
         raise ValueError(f"Unsupported mode: {mode}")
+    disabled = _normalize_disabled_destinations(disabled_destinations)
+    if destination in disabled:
+        raise ValueError(f"Destination is disabled: {destination}")
 
     store = SyncStateStore(state_path)
     collected = _build_draft_collection(
@@ -244,18 +258,29 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--markdown-path", help="Markdown file source")
     parser.add_argument("--folder-path", help="Folder source")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--disable",
+        action="append",
+        default=[],
+        help="Disable one or more destinations (comma-separated or repeated).",
+    )
 
     args = parser.parse_args(argv)
-    result = run_sync(
-        destination=args.destination,
-        mode=args.mode,
-        state_path=args.state,
-        vault_root=args.vault_root,
-        link=args.link,
-        markdown_path=args.markdown_path,
-        folder_path=args.folder_path,
-        dry_run=args.dry_run,
-    )
+    try:
+        result = run_sync(
+            destination=args.destination,
+            mode=args.mode,
+            state_path=args.state,
+            vault_root=args.vault_root,
+            link=args.link,
+            markdown_path=args.markdown_path,
+            folder_path=args.folder_path,
+            dry_run=args.dry_run,
+            disabled_destinations=args.disable,
+        )
+    except ValueError as exc:
+        print(str(exc))
+        return 1
     print(
         {
             "destination": result.destination,

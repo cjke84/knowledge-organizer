@@ -159,3 +159,37 @@ def test_unknown_destination_raises(tmp_path: Path) -> None:
             drafts=[_draft()],
             state_path=tmp_path / "state.json",
         )
+
+
+def test_disabled_destination_raises(tmp_path: Path) -> None:
+    from scripts.knowledge_sync import run_sync
+
+    with pytest.raises(ValueError, match="disabled"):
+        run_sync(
+            destination="ima",
+            mode="once",
+            drafts=[_draft()],
+            state_path=tmp_path / "state.json",
+            ima_config_overrides={"client_id": "c", "api_key": "k"},
+            ima_transport=lambda payload, config: {"doc_id": "doc_123"},
+            disabled_destinations=["ima"],
+        )
+
+
+def test_main_supports_disable_switch(tmp_path: Path) -> None:
+    from scripts.knowledge_sync import main
+
+    exit_code = main(
+        [
+            "--destination",
+            "feishu",
+            "--mode",
+            "once",
+            "--state",
+            str(tmp_path / "state.json"),
+            "--disable",
+            "feishu,ima",
+        ]
+    )
+
+    assert exit_code == 1

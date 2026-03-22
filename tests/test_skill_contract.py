@@ -9,7 +9,8 @@ def test_skill_contract_mentions_obsidian_frontmatter_wikilinks_and_embeds():
     tag_text = (repo_root / "references" / "tag-system.md").read_text(encoding="utf-8")
 
     required_skill_phrases = [
-        "structured Obsidian-ready Markdown",
+        "structured Markdown",
+        "optional sync targets for Obsidian, Feishu, and Tencent IMA",
         "YAML frontmatter",
         "wikilink",
         "embed",

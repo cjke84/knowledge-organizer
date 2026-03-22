@@ -18,6 +18,8 @@ def test_skill_contract_mentions_obsidian_frontmatter_wikilinks_and_embeds():
         "absolute path",
         "frontmatter / wikilink / embed / block id",
         "prefer `xiaohongshu-mcp` for Xiaohongshu links",
+        "For WeChat public-account imports, read `references/wechat-import.md`",
+        "Before running script-based import flows, prefer checking `scripts/check_runtime.py`",
     ]
     required_tag_phrases = [
         "至少 1 个领域标签 + 1 个类型标签",

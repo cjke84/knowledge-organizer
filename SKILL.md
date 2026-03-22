@@ -28,9 +28,20 @@ This skill turns article links, drafts, and notes into structured Obsidian-ready
 ## Workflow
 
 1. Get content: use a browser for public-account links, prefer `xiaohongshu-mcp` for Xiaohongshu links, use `web_fetch` for other web pages, and process user-provided content directly
-2. Check duplicates: prompt the user when a duplicate is found, then wait for overwrite, merge, or skip
+2. Check duplicates before final write: prefer URL + title + similarity checks, and treat duplicate hits as normal control flow
 3. Render the note: `scripts/obsidian_note.py` generates the content and destination path
 4. Write to the vault: runtime writes directly to `destination_path` without a second Markdown pass
+
+For WeChat public-account imports, read `references/wechat-import.md` before doing browser extraction, image handling, or final write.
+
+## Execution Rules
+
+- After reading this skill, follow its workflow before improvising your own path
+- Do not skip duplicate checks on import tasks
+- If a browser/evaluate call fails twice because of parameter misuse, stop blind retries and re-read the workflow / reference
+- Prefer reusing bundled scripts over hand-writing a parallel pipeline when the scripts already cover the task
+- For article imports, separate the pipeline into: fetch/normalize → duplicate-check → render → write, instead of mixing all steps together
+- Before running script-based import flows, prefer checking `scripts/check_runtime.py` to confirm Python and knowledge-base paths are available
 
 ## Contract
 
@@ -41,6 +52,24 @@ This skill turns article links, drafts, and notes into structured Obsidian-ready
 - Vault root must be a non-empty absolute path
 - Vault root should come from `OPENCLAW_KB_ROOT` when available
 - This contract covers frontmatter / wikilink / embed / block id rules
+
+## WeChat Notes
+
+- WeChat article links (`mp.weixin.qq.com`) are a special case: default to `browser`, not `web_fetch`
+- Prefer the container order documented in `references/wechat-import.md` when extracting正文
+- For image extraction, prefer `data-src`, then `src`, then `data-original` / `data_src` / `original`
+- Preserve or add `from=appmsg` on WeChat image URLs when needed
+- Normalize image fields before conversion when possible (treat resolved `data-src` as the final `src`)
+- Strip common tail noise (scan prompts, 授权提示, 阅读原文引导) before final render
+- `browser act` with evaluation must include `fn`; missing `fn` is a caller error, not a reason to improvise blindly
+
+## Xiaohongshu Notes
+
+- Xiaohongshu links are a special case: default to `xiaohongshu-mcp`, not generic `web_fetch`
+- Prefer checking MCP status first when the workflow depends on local login/session
+- Prefer `detail` for complete note content; use `search` → `detail` only when direct note identifiers are missing
+- Treat Xiaohongshu as a structured content source, not just a webpage snapshot
+- Preserve source metadata such as author, publish time, tags, images, and engagement when available
 
 ## `draft.images` Example
 

@@ -18,7 +18,7 @@ A knowledge-base workflow skill that turns article links, drafts, and notes into
 
 ## Capabilities
 
-- OpenClaw- and Codex-compatible skill for Obsidian-native knowledge organization
+- OpenClaw- and Codex-compatible skill for knowledge organization
 - Supports public-account posts, Xiaohongshu links, and ordinary web pages
 - Obsidian-ready note generator for vault workflows
 - validates tags against the repository tag contract

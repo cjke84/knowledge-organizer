@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![GitHub](https://img.shields.io/badge/GitHub-cjke84%2Fknowledge--organizer-blue?logo=github)](https://github.com/cjke84/knowledge-organizer)
 
-一个面向知识库工作流的整理工具，用于把文章、链接和草稿整理成结构化、可直接落盘的笔记，也可以同步到飞书知识库和腾讯 IMA。
+一个面向知识库整理工具的工作流助手，用于把文章、链接和草稿整理成结构化、可直接落盘的笔记，也可以同步到飞书知识库和腾讯 IMA。
 
 ## 它会做什么
 
@@ -19,7 +19,7 @@
 
 ## 能力概览
 
-- OpenClaw 和 Codex 可用的 Obsidian 原生整理工具
+- OpenClaw 和 Codex 可用的知识库整理工具
 - 面向 vault 工作流的成品笔记生成器
 - 按标签契约校验标签（tags）
 - 推荐可直接链接的相关文章

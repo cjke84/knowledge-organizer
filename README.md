@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![GitHub](https://img.shields.io/badge/GitHub-cjke84%2Fknowledge--organizer-blue?logo=github)](https://github.com/cjke84/knowledge-organizer)
 
-一个面向知识库工作流的整理工具，用于把文章、链接和草稿整理成结构化、可直接落盘的笔记，也可以同步到飞书知识库和腾讯 IMA。
+一个面向知识库工作流的整理工具，用于把文章、链接和草稿整理成结构化笔记。你可以直接写入 Obsidian，也可以同步到飞书知识库和腾讯 IMA。
 
 ## 文档入口
 
@@ -14,13 +14,13 @@
 
 ## 能力概览
 
-- 提取文章内容并生成 Obsidian 原生 Markdown 笔记
+- 一次处理文章、链接和草稿，输出可直接落盘的结构化笔记
 - 在写入前执行重复检测，支持结构化决策结果（decision）
 - 生成标签、摘要、元数据和相关文章建议
 - 自动下载图片到 `assets/` 并保留可读引用，支持 `src` / `data_src` / `data-original` / `data-lazy-src` / `srcset` / `url` / `image_url` / `original` 等常见字段
 - 支持多来源输入，包括公众号文章、小红书链接和普通网页
-- 按仓库标签契约校验标签（tags）
 - 统一编排 `destination=obsidian|feishu|ima` 和 `mode=once|sync`
+- Obsidian 直接写入本地 vault
 - Feishu 通过 OpenClaw 官方 `openclaw-lark` 插件接入
 - IMA 通过 `import_doc` OpenAPI 直连
 
@@ -35,10 +35,17 @@ python scripts/find_related.py alpha beta --title "新标题" --json
 ## 使用方法
 
 1. 把文章链接或草稿交给 OpenClaw。
-2. 让它执行去重、标签生成和摘要整理。
-3. 选择目标：`obsidian`、`feishu` 或 `ima`。
-4. 选择模式：`once` 一次导入，或 `sync` 增量同步。
-5. 输出可直接写入 Obsidian 的 Markdown 笔记，或同步到飞书 / IMA。
+2. 选择目标：`obsidian`、`feishu` 或 `ima`。
+3. 选择模式：`once` 一次导入，或 `sync` 增量同步。
+4. Obsidian 需要提供 vault 路径；Feishu 和 IMA 需要先准备好对应插件或 API 凭据。
+5. 工具会先去重，再生成摘要、标签和元数据，最后写入本地笔记或同步到飞书 / IMA。
+6. 你也可以直接调用同步编排器，例如：
+
+```bash
+python3 -m scripts.knowledge_sync --destination obsidian --mode once --state .sync-state.json --vault-root /path/to/vault --markdown-path draft.md
+python3 -m scripts.knowledge_sync --destination feishu --mode once --state .sync-state.json --markdown-path draft.md
+python3 -m scripts.knowledge_sync --destination ima --mode sync --state .sync-state.json --folder-path drafts/
+```
 
 ## 适用场景
 

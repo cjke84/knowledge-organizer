@@ -1,11 +1,11 @@
 ---
 name: knowledge-organizer
-description: An OpenClaw- and Codex-compatible knowledge organization skill for importing articles, organizing notes, applying tags, archiving content, generating summaries, and suggesting related notes.
+description: An OpenClaw- and Codex-compatible knowledge organization skill for importing articles, organizing notes, syncing to Feishu and Tencent IMA, applying tags, archiving content, generating summaries, and suggesting related notes.
 ---
 
 # Knowledge Organizer
 
-This skill turns article links, drafts, and notes into structured Obsidian-ready Markdown with duplicate checks, tags, summaries, related-note suggestions, image downloads, and optional sync targets for Feishu and IMA.
+This skill turns article links, drafts, and notes into structured Markdown with duplicate checks, tags, summaries, related-note suggestions, image downloads, and optional sync targets for Obsidian, Feishu, and Tencent IMA.
 
 ## Use Cases
 
@@ -27,6 +27,14 @@ This skill turns article links, drafts, and notes into structured Obsidian-ready
 - Sync to Feishu through the official OpenClaw `openclaw-lark` plugin
 - Sync to Tencent IMA through the direct import_doc OpenAPI flow
 - Orchestrate `destination=obsidian|feishu|ima` with `mode=once|sync`
+
+## Usage
+
+- For Obsidian, set `destination=obsidian`, provide `vault_root`, and let the runtime write directly to local markdown files.
+- For Feishu, set `destination=feishu` and make sure the OpenClaw `openclaw-lark` plugin is available for `feishu-create-doc` and `feishu-update-doc`.
+- For Tencent IMA, set `destination=ima` and configure `IMA_OPENAPI_CLIENTID` and `IMA_OPENAPI_APIKEY` before syncing.
+- Use `mode=once` for a single import run, or `mode=sync` to skip items whose content hash has not changed.
+- The shared sync orchestrator lives in `scripts/knowledge_sync.py`, and can be used with `--markdown-path`, `--folder-path`, or `--link`.
 
 ## Workflow
 

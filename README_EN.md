@@ -3,15 +3,15 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![GitHub](https://img.shields.io/badge/GitHub-cjke84%2Fknowledge--organizer-blue?logo=github)](https://github.com/cjke84/knowledge-organizer)
 
-A knowledge-base workflow skill that turns article links, drafts, and notes into structured Obsidian-ready Markdown with duplicate checks, tags, summaries, related-note suggestions, image downloads, and optional Feishu / IMA sync targets.
+A knowledge-base workflow skill that turns article links, drafts, and notes into structured Markdown. You can write directly into Obsidian or sync to Feishu Knowledge Base and Tencent IMA.
 
 ## What it does
 
-- extract the article
+- process articles, links, and drafts into structured notes
 - check duplicates and return a structured decision
-- generate tags, summary, and metadata
+- generate tags, summaries, and metadata
 - download images into `assets/` and keep readable references, including common fields like `src`, `data_src`, `data-original`, `data-lazy-src`, `srcset`, `url`, `image_url`, and `original`
-- render an Obsidian-ready note
+- write directly to Obsidian vault files
 - orchestrate `destination=obsidian|feishu|ima` and `mode=once|sync`
 - sync to Feishu through the official OpenClaw `openclaw-lark` plugin
 - sync to Tencent IMA through the direct `import_doc` OpenAPI flow
@@ -20,7 +20,7 @@ A knowledge-base workflow skill that turns article links, drafts, and notes into
 
 - OpenClaw- and Codex-compatible skill for knowledge organization
 - Supports public-account posts, Xiaohongshu links, and ordinary web pages
-- Obsidian-ready note generator for vault workflows
+- Works for Obsidian vault writes, Feishu sync, and IMA sync
 - validates tags against the repository tag contract
 - recommends directly linkable related notes
 - supports one-shot import and incremental sync into Obsidian, Feishu, or IMA
@@ -33,6 +33,21 @@ A knowledge-base workflow skill that turns article links, drafts, and notes into
 - archive notes
 - generate summaries
 - suggest related notes
+
+## How to use
+
+1. Give OpenClaw an article link, a markdown draft, or a folder of drafts.
+2. Choose a destination: `obsidian`, `feishu`, or `ima`.
+3. Choose a mode: `once` for a single run or `sync` for incremental updates.
+4. For Obsidian, provide a vault root. For Feishu and IMA, make sure the plugin or API credentials are ready.
+5. The tool will dedupe first, then render the note or sync payload, then write or upload it.
+6. You can call the sync orchestrator directly:
+
+```bash
+python3 -m scripts.knowledge_sync --destination obsidian --mode once --state .sync-state.json --vault-root /path/to/vault --markdown-path draft.md
+python3 -m scripts.knowledge_sync --destination feishu --mode once --state .sync-state.json --markdown-path draft.md
+python3 -m scripts.knowledge_sync --destination ima --mode sync --state .sync-state.json --folder-path drafts/
+```
 
 ## `draft.images` example
 

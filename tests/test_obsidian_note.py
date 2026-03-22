@@ -203,7 +203,7 @@ def test_render_note_includes_frontmatter_aliases_tags_and_links(tmp_path):
     assert "- First point" in rendered.content
     assert "- First point Second line" in rendered.content
 
-    # Obsidian-native internal references: wikilinks and embeds.
+    # Internal references: wikilinks and embeds.
     assert "[[Alpha Note]]" in rendered.content
     assert "![[Beta Note]]" in rendered.content
     assert "[[Gamma Note]]" in rendered.content

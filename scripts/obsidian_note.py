@@ -23,12 +23,12 @@ class RenderedNote:
 
 
 def wikilink(target: str) -> str:
-    """Return an Obsidian-native wikilink without relying on plugins."""
+    """Return a wiki-style link without relying on plugins."""
     return f"[[{target}]]"
 
 
 def embed(target: str) -> str:
-    """Return an Obsidian-native embed without relying on plugins."""
+    """Return an embed without relying on plugins."""
     return f"![[{target}]]"
 
 

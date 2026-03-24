@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import argparse
 from dataclasses import dataclass
-from pathlib import Path
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any, Callable, Iterable
 
-from .feishu_kb import FeishuImportConfig, import_to_feishu
-from .ima_kb import ImaImportConfig, import_to_ima
+from .feishu_kb import FeishuImportConfig, import_to_feishu, resolve_feishu_config
+from .ima_kb import ImaImportConfig, import_to_ima, resolve_ima_config
 from .import_models import ImportDraft
 from .import_sources import load_folder, load_link, load_markdown_file
 from .obsidian_note import render_obsidian_note, sanitize_filename
@@ -106,11 +106,17 @@ def _write_obsidian_note(
 
 
 def _make_feishu_config(overrides: dict[str, Any] | None) -> FeishuImportConfig:
-    return FeishuImportConfig(**(overrides or {}))
+    config = resolve_feishu_config()
+    if not overrides:
+        return config
+    return FeishuImportConfig(**{**config.__dict__, **overrides})
 
 
 def _make_ima_config(overrides: dict[str, Any] | None) -> ImaImportConfig:
-    return ImaImportConfig(**(overrides or {}))
+    config = resolve_ima_config()
+    if not overrides:
+        return config
+    return ImaImportConfig(**{**config.__dict__, **overrides})
 
 
 def _normalize_disabled_destinations(values: Iterable[str] | None) -> set[str]:
@@ -161,7 +167,9 @@ def run_sync(
     results: list[SyncItemResult] = []
     processed = 0
     skipped = duplicate_skipped
-    resolved_vault_root = resolve_vault_root(vault_root) if destination == "obsidian" else None
+    resolved_vault_root = (
+        resolve_vault_root(vault_root, allow_default=False) if destination == "obsidian" else None
+    )
 
     for draft in collected:
         if _should_skip_sync(store=store, destination=destination, draft=draft, mode=mode):
@@ -266,6 +274,12 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     args = parser.parse_args(argv)
+    if args.destination == "feishu" and not args.dry_run:
+        print(
+            "Feishu sync from python3 -m scripts.knowledge_sync requires an OpenClaw host/plugin transport "
+            "such as openclaw-lark; use --dry-run here or run the import through an OpenClaw host."
+        )
+        return 1
     try:
         result = run_sync(
             destination=args.destination,
@@ -278,7 +292,7 @@ def main(argv: list[str] | None = None) -> int:
             dry_run=args.dry_run,
             disabled_destinations=args.disable,
         )
-    except ValueError as exc:
+    except (RuntimeError, ValueError) as exc:
         print(str(exc))
         return 1
     print(

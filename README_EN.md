@@ -45,10 +45,26 @@ A knowledge-base workflow skill that turns article links, drafts, and notes into
 
 ```bash
 python3 -m scripts.knowledge_sync --destination obsidian --mode once --state .sync-state.json --vault-root /path/to/vault --markdown-path draft.md
-python3 -m scripts.knowledge_sync --destination feishu --mode once --state .sync-state.json --markdown-path draft.md
+python3 -m scripts.knowledge_sync --destination feishu --mode once --state .sync-state.json --markdown-path draft.md --dry-run
 python3 -m scripts.knowledge_sync --destination ima --mode sync --state .sync-state.json --folder-path drafts/
 python3 -m scripts.knowledge_sync --destination obsidian --mode once --state .sync-state.json --vault-root /path/to/vault --markdown-path draft.md --disable feishu,ima
 ```
+
+Real Feishu imports require an OpenClaw host/plugin transport, which means `openclaw-lark` must expose `feishu_create_doc` / `feishu_update_doc` inside the OpenClaw host. The bare `python3 -m scripts.knowledge_sync` entrypoint is for validation and `--dry-run`, not a standalone Feishu transport.
+If your OpenClaw host needs an explicit Feishu destination, use routing envs such as `FEISHU_WIKI_SPACE`, `FEISHU_FOLDER_TOKEN`, `FEISHU_WIKI_NODE`, `FEISHU_KB_ID`, or `FEISHU_FOLDER_ID`. These are optional placement hints, not always-required secrets.
+`FEISHU_IMPORT_ENDPOINT` is only for intentional custom transport overrides and should stay unset for the normal `openclaw-lark` path.
+
+## OpenClaw 2026.3.22 install notes
+
+- Prefer native `openclaw skills install` / `openclaw skills update` for skill management
+- If you distribute this repository as a release package, you can also use ClawHub or bundle flows, but keep the skill name as `knowledge-organizer`
+- Keep `SKILL.md`, `scripts/`, `references/`, and `tests/` together as one directory skill in a location OpenClaw can discover
+- Obsidian workflows need a valid absolute vault root and should prefer `OPENCLAW_KB_ROOT`
+- Feishu sync depends on the official `openclaw-lark` plugin, with `feishu_create_doc` / `feishu_update_doc` available in the OpenClaw host
+- Feishu CLI examples require an OpenClaw host/plugin transport; the bare `python3 -m scripts.knowledge_sync` entrypoint will fail clearly when transport is missing
+- `FEISHU_WIKI_SPACE`, `FEISHU_FOLDER_TOKEN`, `FEISHU_WIKI_NODE`, `FEISHU_KB_ID`, and `FEISHU_FOLDER_ID` are optional Feishu placement envs rather than universally required credentials
+- Xiaohongshu imports depend on `xiaohongshu-mcp`
+- IMA sync depends on `IMA_OPENAPI_CLIENTID` and `IMA_OPENAPI_APIKEY`
 
 ## `draft.images` example
 

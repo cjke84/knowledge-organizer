@@ -1,0 +1,8 @@
+.git
+.gitignore
+.DS_Store
+.pytest_cache
+docs/
+wechat_article.md
+xiaohongshu_copy.md
+公众号推广_写作助手.md

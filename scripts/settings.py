@@ -10,7 +10,7 @@ def _expand_path(path: str | None) -> str | None:
     return os.path.expanduser(path)
 
 
-def resolve_vault_root(config_root: str | None = None) -> str:
+def resolve_vault_root(config_root: str | None = None, *, allow_default: bool = True) -> str | None:
     """Resolve the knowledge base root with the proper priority."""
     env_root = _expand_path(os.environ.get("OPENCLAW_KB_ROOT"))
     if env_root:
@@ -18,4 +18,6 @@ def resolve_vault_root(config_root: str | None = None) -> str:
     config_root = _expand_path(config_root)
     if config_root:
         return config_root
+    if not allow_default:
+        return None
     return DEFAULT_KB_PATH

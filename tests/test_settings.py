@@ -18,6 +18,12 @@ def test_resolve_vault_root_prefers_env_then_config_then_default(monkeypatch):
     assert settings.resolve_vault_root(None) == settings.DEFAULT_KB_PATH
 
 
+def test_resolve_vault_root_can_require_explicit_configuration(monkeypatch):
+    monkeypatch.delenv("OPENCLAW_KB_ROOT", raising=False)
+
+    assert settings.resolve_vault_root(None, allow_default=False) is None
+
+
 def test_resolve_vault_root_expands_tilde(monkeypatch):
     monkeypatch.setenv("OPENCLAW_KB_ROOT", "~/ocl_env_root_expand")
     expanded_env = settings.resolve_vault_root()

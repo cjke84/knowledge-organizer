@@ -106,6 +106,20 @@ def test_dry_run_does_not_write_obsidian_files(tmp_path: Path) -> None:
     assert list((vault_root / "assets").rglob("*")) == []
 
 
+def test_obsidian_sync_requires_explicit_vault_root_or_env(tmp_path: Path, monkeypatch) -> None:
+    from scripts.knowledge_sync import run_sync
+
+    monkeypatch.delenv("OPENCLAW_KB_ROOT", raising=False)
+
+    with pytest.raises(ValueError, match="vault_root is required"):
+        run_sync(
+            destination="obsidian",
+            mode="once",
+            drafts=[_draft(title="Missing Vault")],
+            state_path=tmp_path / "state.json",
+        )
+
+
 def test_once_mode_dedupes_duplicate_sources(tmp_path: Path) -> None:
     from scripts.knowledge_sync import run_sync
 
@@ -147,6 +161,58 @@ def test_feishu_dispatch_can_be_faked_via_transport(tmp_path: Path) -> None:
     assert seen["payload"]["title"] == "Feishu Note"
     assert seen["payload"]["wiki_space"] == "my_library"
     assert "<image url=" in seen["payload"]["markdown"]
+
+
+def test_ima_sync_reads_environment_backed_config(tmp_path: Path, monkeypatch) -> None:
+    from scripts.knowledge_sync import run_sync
+
+    draft = _draft(title="IMA Env Note")
+    seen = {}
+    monkeypatch.setenv("IMA_OPENAPI_CLIENTID", "client_env")
+    monkeypatch.setenv("IMA_OPENAPI_APIKEY", "key_env")
+    monkeypatch.setenv("IMA_OPENAPI_FOLDER_ID", "folder_env")
+
+    def fake_ima_transport(payload, config):
+        seen["config"] = config
+        return {"doc_id": "doc_env"}
+
+    result = run_sync(
+        destination="ima",
+        mode="once",
+        drafts=[draft],
+        state_path=tmp_path / "state.json",
+        ima_transport=fake_ima_transport,
+    )
+
+    assert result.processed == 1
+    assert seen["config"].client_id == "client_env"
+    assert seen["config"].api_key == "key_env"
+    assert seen["config"].folder_id == "folder_env"
+
+
+def test_feishu_sync_reads_environment_backed_config(tmp_path: Path, monkeypatch) -> None:
+    from scripts.knowledge_sync import run_sync
+
+    draft = _draft(title="Feishu Env Note")
+    seen = {}
+    monkeypatch.setenv("FEISHU_WIKI_SPACE", "wiki_env")
+    monkeypatch.setenv("FEISHU_FOLDER_TOKEN", "folder_env")
+
+    def fake_feishu_transport(payload, config):
+        seen["config"] = config
+        return {"doc_id": "doc_env", "doc_url": "https://www.feishu.cn/docx/doc_env"}
+
+    result = run_sync(
+        destination="feishu",
+        mode="once",
+        drafts=[draft],
+        state_path=tmp_path / "state.json",
+        feishu_transport=fake_feishu_transport,
+    )
+
+    assert result.processed == 1
+    assert seen["config"].wiki_space == "wiki_env"
+    assert seen["config"].folder_token == "folder_env"
 
 
 def test_unknown_destination_raises(tmp_path: Path) -> None:
@@ -193,3 +259,25 @@ def test_main_supports_disable_switch(tmp_path: Path) -> None:
     )
 
     assert exit_code == 1
+
+
+def test_main_reports_feishu_transport_requirement(tmp_path: Path, capsys) -> None:
+    from scripts.knowledge_sync import main
+
+    exit_code = main(
+        [
+            "--destination",
+            "feishu",
+            "--mode",
+            "once",
+            "--state",
+            str(tmp_path / "state.json"),
+            "--markdown-path",
+            str(tmp_path / "draft.md"),
+        ]
+    )
+
+    captured = capsys.readouterr()
+
+    assert exit_code == 1
+    assert "openclaw-lark" in captured.out

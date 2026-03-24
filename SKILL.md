@@ -1,6 +1,31 @@
 ---
 name: knowledge-organizer
-description: An OpenClaw- and Codex-compatible knowledge organization skill for importing articles, organizing notes, syncing to Feishu and Tencent IMA, applying tags, archiving content, generating summaries, and suggesting related notes.
+description: Use when importing articles, organizing notes, or syncing a knowledge base across Obsidian, Feishu, and Tencent IMA with OpenClaw or Codex.
+version: 0.1.2
+metadata:
+  openclaw:
+    requires:
+      env:
+        - OPENCLAW_KB_ROOT
+        - IMA_OPENAPI_CLIENTID
+        - IMA_OPENAPI_APIKEY
+      bins:
+        - python3
+      anyBins:
+        - openclaw
+      integrations:
+        - openclaw-lark
+        - xiaohongshu-mcp
+      optionalEnv:
+        - FEISHU_WIKI_SPACE
+        - FEISHU_FOLDER_TOKEN
+        - FEISHU_WIKI_NODE
+        - FEISHU_KB_ID
+        - FEISHU_FOLDER_ID
+        - FEISHU_IMPORT_ENDPOINT
+    primaryEnv: OPENCLAW_KB_ROOT
+    skillKey: knowledge-organizer
+    homepage: https://github.com/cjke84/knowledge-organizer
 ---
 
 # Knowledge Organizer
@@ -31,7 +56,10 @@ This skill turns article links, drafts, and notes into structured Markdown with 
 ## Usage
 
 - For Obsidian, set `destination=obsidian`, provide `vault_root`, and let the runtime write directly to local markdown files.
-- For Feishu, set `destination=feishu` and make sure the OpenClaw `openclaw-lark` plugin is available for `feishu-create-doc` and `feishu-update-doc`.
+- For Feishu, set `destination=feishu` and make sure the OpenClaw `openclaw-lark` plugin is available for `feishu_create_doc` and `feishu_update_doc`.
+- For Feishu placement, set one of `FEISHU_WIKI_NODE`, `FEISHU_WIKI_SPACE` / `FEISHU_KB_ID`, or `FEISHU_FOLDER_TOKEN` / `FEISHU_FOLDER_ID` when your OpenClaw host needs an explicit target location.
+- The bare `python3 -m scripts.knowledge_sync` CLI cannot inject an OpenClaw transport on its own; use it for validation or dry-run, and run real Feishu imports through an OpenClaw host/plugin transport.
+- `FEISHU_IMPORT_ENDPOINT` is only for explicit custom transport setups; do not set it unless you intentionally want to override the default OpenClaw plugin path.
 - For Tencent IMA, set `destination=ima` and configure `IMA_OPENAPI_CLIENTID` and `IMA_OPENAPI_APIKEY` before syncing.
 - Use `mode=once` for a single import run, or `mode=sync` to skip items whose content hash has not changed.
 - The shared sync orchestrator lives in `scripts/knowledge_sync.py`, and can be used with `--markdown-path`, `--folder-path`, or `--link`.
@@ -39,7 +67,8 @@ This skill turns article links, drafts, and notes into structured Markdown with 
 ## Usage Examples
 
 - Obsidian: `python3 -m scripts.knowledge_sync --destination obsidian --mode once --state .sync-state.json --vault-root /path/to/vault --markdown-path draft.md`
-- Feishu: `python3 -m scripts.knowledge_sync --destination feishu --mode once --state .sync-state.json --markdown-path draft.md`
+- Feishu validation / dry-run: `python3 -m scripts.knowledge_sync --destination feishu --mode once --state .sync-state.json --markdown-path draft.md --dry-run`
+- Feishu real import: run the same draft through an OpenClaw host that exposes `openclaw-lark` / `feishu_create_doc` / `feishu_update_doc`
 - Tencent IMA: `python3 -m scripts.knowledge_sync --destination ima --mode sync --state .sync-state.json --folder-path drafts/`
 - Disable one or more destinations: add `--disable obsidian,feishu` to skip the selected targets when invoking the sync orchestrator.
 
@@ -62,7 +91,7 @@ For WeChat public-account imports, read `references/wechat-import.md` before doi
 - Prefer reusing bundled scripts over hand-writing a parallel pipeline when the scripts already cover the task
 - For article imports, separate the pipeline into: fetch/normalize → duplicate-check → render → write, instead of mixing all steps together
 - Before running script-based import flows, prefer checking `scripts/check_runtime.py` to confirm Python and knowledge-base paths are available
-- For Feishu import, prefer the official OpenClaw `openclaw-lark` plugin (`feishu-create-doc` / `feishu-update-doc`) and use Lark Markdown with `<image url="..."/>` / `<file url="..." name="..."/>`
+- For Feishu import, prefer the official OpenClaw `openclaw-lark` plugin (`feishu_create_doc` / `feishu_update_doc`) and use Lark Markdown with `<image url="..."/>` / `<file url="..." name="..."/>`
 - For IMA import, use the direct OpenAPI `import_doc` flow with `IMA_OPENAPI_CLIENTID` and `IMA_OPENAPI_APIKEY`
 
 ## Contract
@@ -114,6 +143,19 @@ images:
 - OpenClaw 兼容
 - Codex 兼容
 - Obsidian vault 工作流
+
+## OpenClaw 2026.3.22 Notes
+
+- Install this repository as a directory skill so OpenClaw can discover `SKILL.md`, `scripts/`, `references/`, and `tests/` together
+- Prefer `openclaw skills install` / `openclaw skills update` for native skill management, or install through ClawHub / bundle flows when packaging this repository for distribution
+- Keep the skill name as `knowledge-organizer` so bundle-to-skill mapping stays stable across OpenClaw and Codex environments
+- Obsidian flows need a valid absolute vault root; prefer `OPENCLAW_KB_ROOT` when it is available
+- Feishu sync depends on the official `openclaw-lark` plugin being installed and configured, with `feishu_create_doc` / `feishu_update_doc` available in the OpenClaw host
+- Feishu placement envs such as `FEISHU_WIKI_SPACE`, `FEISHU_FOLDER_TOKEN`, `FEISHU_WIKI_NODE`, `FEISHU_KB_ID`, and `FEISHU_FOLDER_ID` are optional routing hints, not always-required secrets
+- Feishu sync from CLI examples requires an OpenClaw host/plugin transport; the bare Python entrypoint only validates the flow and reports missing transport clearly
+- Xiaohongshu imports depend on `xiaohongshu-mcp` being available before the workflow reaches structured note extraction
+- Tencent IMA sync depends on `IMA_OPENAPI_CLIENTID` and `IMA_OPENAPI_APIKEY`
+- This skill does not depend on legacy Chrome relay settings, deprecated `CLAWDBOT_*` / `MOLTBOT_*` env names, or removed OpenClaw plugin SDK shims
 
 ## Project Links
 
